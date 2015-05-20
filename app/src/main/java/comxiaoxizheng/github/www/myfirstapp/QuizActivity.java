@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -13,8 +14,8 @@ import android.widget.Toast;
 public class QuizActivity extends ActionBarActivity {
     private Button mTrueButton;
     private Button mFalseButton;
-    private Button mNextButton;
-    private Button mPrevButton;
+    private ImageButton mNextButton;
+    private ImageButton mPrevButton;
     private TextView mQuestionTextView; //java code for the generic textView of the question
 
     //initializes the true/false question bank into an array with abstract type TrueFalse name: mQuestionBank
@@ -60,7 +61,7 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
-        mNextButton = (Button)findViewById(R.id.next_button);
+        mNextButton = (ImageButton)findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -70,7 +71,7 @@ public class QuizActivity extends ActionBarActivity {
         });
         updateQuestion();
 
-        mPrevButton = (Button)findViewById(R.id.prev_button);
+        mPrevButton = (ImageButton)findViewById(R.id.prev_button);
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
