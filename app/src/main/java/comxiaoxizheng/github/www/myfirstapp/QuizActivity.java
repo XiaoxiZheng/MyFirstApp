@@ -2,6 +2,7 @@ package comxiaoxizheng.github.www.myfirstapp;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,6 +28,8 @@ public class QuizActivity extends ActionBarActivity {
     };
     //end constructor for the TrueFalse array
     private int mCurrentIndex = 0; //default current index of array is 0
+
+    private static final String TAG = "myFirstApp";
     //end private instance declaration
 
     //methods
@@ -34,6 +37,7 @@ public class QuizActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "onCreate(Bundle) called"); //log activity event with an useful string message
         setContentView(R.layout.activity_quiz);
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
@@ -87,7 +91,31 @@ public class QuizActivity extends ActionBarActivity {
         updateQuestion();
     }
 
-
+    @Override //asks the compiler to ensure the class actually has the method attempting to override
+    public void onStart(){
+        super.onStart();
+        Log.d(TAG, "onStart() called");//log activity life-cycle event with an useful string message
+    }
+    @Override
+    public void onPause(){
+        super.onPause();
+        Log.d(TAG, "onPause() called");//log activity life-cycle event with an useful string message
+    }
+    @Override
+    public void onResume(){
+        super.onResume();
+        Log.d(TAG, "onResume() called");//log activity life-cycle event with an useful string message
+    }
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.d(TAG, "onStop() called");//log activity life-cycle event with an useful string message
+    }
+    @Override
+    public void onDestroy(){
+        super.onDestroy();
+        Log.d(TAG, "onDestroy() called");//log activity life-cycle event with an useful string message
+    }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
