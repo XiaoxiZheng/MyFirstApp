@@ -30,6 +30,7 @@ public class QuizActivity extends ActionBarActivity {
     private int mCurrentIndex = 0; //default current index of array is 0
 
     private static final String TAG = "myFirstApp";
+    private static final String KEY_INDEX = "index";
     //end private instance declaration
 
     //methods
@@ -39,6 +40,10 @@ public class QuizActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         Log.d(TAG, "onCreate(Bundle) called"); //log activity event with an useful string message
         setContentView(R.layout.activity_quiz);
+
+        if(savedInstanceState!= null){ //before performing anything, first test if previous instanceState exist
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX,0);
+        }
 
         mQuestionTextView = (TextView) findViewById(R.id.question_text_view);
         mQuestionTextView.setOnClickListener(new View.OnClickListener() {
@@ -89,6 +94,14 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
         updateQuestion();
+    }
+    @Override
+    //a method written to override the Activity method.
+    //data is saved in the BUNDLE object---a structure that maps string keys to values of certain limited types.
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        Log.i(TAG, "onSaveInstanceState");
+        savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
     }
 
     @Override //asks the compiler to ensure the class actually has the method attempting to override
