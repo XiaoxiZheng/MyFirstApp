@@ -1,5 +1,6 @@
 package comxiaoxizheng.github.www.myfirstapp;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -15,9 +16,11 @@ import android.widget.Toast;
 public class QuizActivity extends ActionBarActivity {
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mCheatButton;
     private ImageButton mNextButton;
     private ImageButton mPrevButton;
     private TextView mQuestionTextView; //java code for the generic textView of the question
+    private boolean mIsCheater;
 
     //initializes the true/false question bank into an array with abstract type TrueFalse name: mQuestionBank
     private TrueFalse[] mQuestionBank = new TrueFalse[]{
@@ -70,11 +73,26 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
 
+        mCheatButton =(Button)findViewById(R.id.cheat_button);
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Start CheatActivity
+                Intent i = new Intent(QuizActivity.this, CheatActivity.class);
+                boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion(); //local variable to store if the answer to currentQuestion is true
+                i.putExtra(CheatActivity.EXTRA_ANSWER_IS_TRUE, answerIsTrue); //a method from the Intent class, where extra info is passed into startActivity(Intent), where the OS forward the intent to the recipient activity
+                //multiple putExtra methods are allowed, so if other relevant info need to be passed, it could be do so using this method
+                //to receive these putExtra info: public boolean getBooleanExtra(String name, boolean defaultValue) is used in the recipient activity.(this is implemented in the CheatActivity.java)
+                startActivityForResult(i,0); //Parameter: (intent,requestCode)..here 0 is a place holder = returning back from cheatActivity
+            }
+        });
+
         mNextButton = (ImageButton)findViewById(R.id.next_button);
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 mCurrentIndex = (mCurrentIndex+1)%mQuestionBank.length; //increment current index mod the length of question bank array
+                mIsCheater = false; //reset the cheater assumption every time the user press the next button
                 updateQuestion();
             }
         });
@@ -94,6 +112,14 @@ public class QuizActivity extends ActionBarActivity {
             }
         });
         updateQuestion();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data){
+        mIsCheater = data.getBooleanExtra(CheatActivity.EXTRA_ANSWER_SHOWN, false);
+        if(data==null){
+            return; //if data is not existence, step out of this method..no reuslt to be shown
+        }
     }
     @Override
     //a method written to override the Activity method.
@@ -158,13 +184,17 @@ public class QuizActivity extends ActionBarActivity {
     private void checkAnswer(boolean userInput){ //helper method to test if user input boolean is the same to the actual answer.
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
         int tempToast;
-        if(userInput==answerIsTrue){
+        if(mIsCheater){
+            tempToast = R.string.judgment_toast;
+        }
+
+        else  if(userInput==answerIsTrue){
             tempToast = R.string.correct_toast;
         }
         else{
             tempToast = R.string.incorrect_toast;
         }
         Toast.makeText(this,tempToast,Toast.LENGTH_SHORT).show();
-
     }
+
 }
