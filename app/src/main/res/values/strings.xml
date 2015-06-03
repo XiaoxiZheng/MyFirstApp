@@ -24,4 +24,6 @@
     <string name="show_answer_button">Show Answer</string>
     <string name="judgment_toast">Cheating is WRONG!!!</string>
 
+    <string name="not_allowed">You CHEATED !!!You are NOT allowed back to this Question!!!</string>
+
   </resources>

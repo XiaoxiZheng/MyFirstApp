@@ -21,6 +21,7 @@ public class QuizActivity extends ActionBarActivity {
     private ImageButton mPrevButton;
     private TextView mQuestionTextView; //java code for the generic textView of the question
     private boolean mIsCheater;
+    private int mLastCheatedQuestion=-1;
 
     //initializes the true/false question bank into an array with abstract type TrueFalse name: mQuestionBank
     private TrueFalse[] mQuestionBank = new TrueFalse[]{
@@ -91,9 +92,17 @@ public class QuizActivity extends ActionBarActivity {
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 mCurrentIndex = (mCurrentIndex+1)%mQuestionBank.length; //increment current index mod the length of question bank array
                 mIsCheater = false; //reset the cheater assumption every time the user press the next button
-                updateQuestion();
+                if(notAllowed(mLastCheatedQuestion,mCurrentIndex,"next")){
+                    return;
+                }
+                else{
+                    updateQuestion();
+
+                }
+
             }
         });
         updateQuestion();
@@ -102,12 +111,24 @@ public class QuizActivity extends ActionBarActivity {
         mPrevButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
                 if (mCurrentIndex == 0) {
                     mCurrentIndex = mQuestionBank.length-1;
-                    updateQuestion();
-                } else {
+                    if(notAllowed(mLastCheatedQuestion,mCurrentIndex,"PrevButton")){
+                        return;
+                    }
+                    else{
+                        updateQuestion();
+                    }
+                }
+                else {
                     mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
-                    updateQuestion();
+                    if(notAllowed(mLastCheatedQuestion,mCurrentIndex,"PrevButton")){
+                        return;
+                    }
+                    else{
+                        updateQuestion();
+                    }
                 }
             }
         });
@@ -129,7 +150,6 @@ public class QuizActivity extends ActionBarActivity {
         Log.i(TAG, "onSaveInstanceState");
         savedInstanceState.putInt(KEY_INDEX, mCurrentIndex);
     }
-
     @Override //asks the compiler to ensure the class actually has the method attempting to override
     public void onStart(){
         super.onStart();
@@ -177,6 +197,7 @@ public class QuizActivity extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
 
+
     private void updateQuestion(){ //helper method to updateQuestion when next is pressed
         int question = mQuestionBank[mCurrentIndex].getQuestion();
         mQuestionTextView.setText(question);//calls android default java code from TextView class and set the text using resource IDs.
@@ -184,8 +205,9 @@ public class QuizActivity extends ActionBarActivity {
     private void checkAnswer(boolean userInput){ //helper method to test if user input boolean is the same to the actual answer.
         boolean answerIsTrue = mQuestionBank[mCurrentIndex].isTrueQuestion();
         int tempToast;
-        if(mIsCheater){
+        if(mIsCheater && userInput==answerIsTrue){
             tempToast = R.string.judgment_toast;
+            mLastCheatedQuestion= mCurrentIndex;
         }
 
         else  if(userInput==answerIsTrue){
@@ -195,6 +217,27 @@ public class QuizActivity extends ActionBarActivity {
             tempToast = R.string.incorrect_toast;
         }
         Toast.makeText(this,tempToast,Toast.LENGTH_SHORT).show();
+    }
+    private boolean notAllowed(int lastCheatedQuestion, int currentIndex, String state){
+        int tempMessage;
+        if(lastCheatedQuestion==currentIndex){
+            tempMessage = R.string.not_allowed;
+            Toast.makeText(this,tempMessage,Toast.LENGTH_SHORT).show();
+            return true;
+        }
+        else{
+            if(state== "next"){
+                tempMessage = R.string.next_button;
+                Toast.makeText(this,tempMessage,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+            else if(state == "PrevButton"){
+                tempMessage = R.string.prev_button;
+                Toast.makeText(this,tempMessage,Toast.LENGTH_SHORT).show();
+                return false;
+            }
+        }
+        return false;
     }
 
 }
